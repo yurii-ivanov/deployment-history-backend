@@ -1,5 +1,5 @@
-CREATE DATABASE DeploymentsHistory;
-USE DeploymentsHistory;
+CREATE DATABASE DeploymentHistory;
+USE DeploymentHistory;
 CREATE TABLE Applications
 (
 	Id int PRIMARY KEY identity NOT NULL,
@@ -24,6 +24,6 @@ ALTER TABLE Deployments
 ALTER TABLE Applications
 	ADD CONSTRAINT uq_Applications_Name UNIQUE(Name, BranchName)
 
--- USE DeploymentsHistory;
+-- USE DeploymentHistory;
 -- SELECT *
 -- FROM Applications
