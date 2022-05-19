@@ -31,8 +31,16 @@
       "commandName": "Docker",
       "launchBrowser": true,
       "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}/swagger",
+      "applicationUrl": "http://+5175",
       "publishAllPorts": true,
-      "useSSL": true
+      "useSSL": true,
+      "httpPort": 5175,
+      "environmentVariables": {
+        "ASPNETCORE_URLS": "http://+:5175",
+
+        "ASPNETCORE_ENVIRONMENT": "qa"
+      }
+
     }
   }
 }

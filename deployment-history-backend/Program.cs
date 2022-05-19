@@ -58,7 +58,6 @@ public class Program
         }
 
         app.UseCustomCors(env);
-        app.UseHttpsRedirection();
 
         app.UseAuthorization();
 
