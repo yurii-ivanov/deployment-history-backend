@@ -1,29 +1,34 @@
-CREATE DATABASE DeploymentHistory;
-USE DeploymentHistory;
+-----------------------------------------------------------------------------------------
+CREATE DATABASE DeploymentHistory
+GO
+USE DeploymentHistory
+GO
 CREATE TABLE Applications
 (
-	Id int PRIMARY KEY identity NOT NULL,
-	Name nvarchar(100) unique NOT NULL,
-	RepoUrl nvarchar(300) NOT NULL,
-	StoryRegEx nvarchar(50) NOT NULL,
-	BranchName nvarchar(50) NOT NULL DEFAULT 'master',
-	IsDisabled bit NOT NULL DEFAULT 0
-)
+    Id int IDENTITY(1,1) NOT NULL,
+    Name nvarchar(100) NOT NULL CONSTRAINT UQ_Application_Name UNIQUE,
+    RepoUrl nvarchar(300) NOT NULL,
+    StoryRegEx nvarchar(50) NOT NULL,
+    IsDisabled bit NOT NULL CONSTRAINT DF_Applications_IsDisabled DEFAULT 0,
 
+
+
+    CONSTRAINT PK_Applications_Id PRIMARY KEY CLUSTERED ([Id])
+)
+GO
 CREATE TABLE Deployments
 (
-	Id int PRIMARY KEY identity NOT NULL,
-	CommitId nvarchar(100) NOT NULL,
-	AppId int REFERENCES Applications(Id) NOT NULL,
-	Timestamp datetime NOT NULL
+    Id int IDENTITY(1,1) NOT NULL,
+    CommitId nvarchar(100) NOT NULL,
+    AppId int NOT NULL,
+	BranchName nvarchar(100) NOT NULL CONSTRAINT DF_Deployments_BranchName DEFAULT 'master',
+    Timestamp datetime NOT NULL,
+
+    CONSTRAINT PK_Deployments_Id PRIMARY KEY CLUSTERED ([Id]),
+    CONSTRAINT FK_Deployments_AppId FOREIGN KEY ([AppId]) REFERENCES [dbo].[Applications]([Id])
 )
 
+GO
 ALTER TABLE Deployments
-	ADD CONSTRAINT uq_Deployments UNIQUE(CommitId, AppId, Timestamp)
-
-ALTER TABLE Applications
-	ADD CONSTRAINT uq_Applications_Name UNIQUE(Name, BranchName)
-
--- USE DeploymentHistory;
--- SELECT *
--- FROM Applications
+ADD CONSTRAINT UQ_Deployments_CommitId_AppId_BranchName_Timestamp UNIQUE(CommitId, AppId, Timestamp, BranchName)
+GO

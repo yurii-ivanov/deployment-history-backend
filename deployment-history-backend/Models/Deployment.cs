@@ -9,14 +9,15 @@ namespace DeploymentHistoryBackend.Models
         public string CommitId { get; set; }
         public int AppId { get; set; }
         [ForeignKey("AppId")]
-        public Application Application { get; set; }
+        public Application? Application { get; set; }
         public DateTime Timestamp { get; set; }
+        public string BranchName { get; set; } = "master";
 
         [JsonIgnore]
         public bool IsValid =>
             string.IsNullOrWhiteSpace(CommitId) == false &&
-            string.IsNullOrWhiteSpace(Application?.Name) == false &&
-            Application.Id > 0 &&
+            string.IsNullOrWhiteSpace(BranchName) == false &&
+            (Application?.Id > 0 || AppId > 0) &&
             Timestamp > DateTime.MinValue;
 
         public override string ToString()
@@ -28,12 +29,15 @@ namespace DeploymentHistoryBackend.Models
         public override bool Equals(object? obj)
         {
             if (obj is not Deployment other) return false;
-            return Application.Id == other.Application.Id && CommitId == other.CommitId && Timestamp == other.Timestamp;
+            return Application?.Id == other.Application?.Id &&
+                   CommitId == other.CommitId &&
+                   Timestamp == other.Timestamp &&
+                   BranchName == other.BranchName;
         }
 
         public override int GetHashCode()
         {
-            return (Application.Id + CommitId + Timestamp).GetHashCode();
+            return (Application?.Id + CommitId + Timestamp + BranchName).GetHashCode();
         }
     }
 }

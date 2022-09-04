@@ -25,7 +25,7 @@ namespace DeploymentHistoryBackend.Services
             var bb = app.RepoUrl.Split('/');
             var bbRepoName = bb[6];
             var bbProjectName = bb[4];
-            var allCommits = (await _bitbucketRepository.GetCommits(bbRepoName, bbProjectName, app.BranchName)).ToList();
+             var allCommits = (await _bitbucketRepository.GetCommits(bbRepoName, bbProjectName)).ToList();
 
             var releases = new List<Release>();
             var length = app.Deployments.Count() - 2;

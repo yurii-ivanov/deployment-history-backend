@@ -8,7 +8,6 @@ namespace DeploymentHistoryBackend.Models
         public string Name { get; set; }
         public string RepoUrl { get; set; }
         public string StoryRegEx { get; set; }
-        public string BranchName { get; set; }
 
         [JsonIgnore]
         public bool IsDisabled{ get; set; }

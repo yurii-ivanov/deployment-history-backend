@@ -8,7 +8,7 @@ namespace DeploymentHistoryBackend.Data
 {
     public interface IBitbucketRepository
     {
-        Task<IEnumerable<BitbucketCommit>> GetCommits(string repoName, string projectName, string branchName);
+        Task<IEnumerable<BitbucketCommit>> GetCommits(string repoName, string projectName, string branchName = "master");
     }
     public class BitbucketRepository : IBitbucketRepository
     {
@@ -20,7 +20,7 @@ namespace DeploymentHistoryBackend.Data
             _httpClient = httpClientFactory.CreateClient("Any");
         }
 
-        public async Task<IEnumerable<BitbucketCommit>> GetCommits(string repoName, string projectName, string branchName)
+        public async Task<IEnumerable<BitbucketCommit>> GetCommits(string repoName, string projectName, string branchName = "master")
         {
             if (string.IsNullOrWhiteSpace(repoName))
             {

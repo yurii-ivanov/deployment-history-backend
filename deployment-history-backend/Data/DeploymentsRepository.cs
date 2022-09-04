@@ -49,6 +49,14 @@ namespace DeploymentHistoryBackend.Data
 
         public async Task<Deployment> Save(Deployment deployment)
         {
+            if (deployment.Application != null)
+            {
+                // Letting context know the Application Parent object already exists in DB
+                // As it was obtained from cache it is considered a whole new object
+                _context.Attach(deployment.Application);
+                _context.Entry(deployment.Application).State = EntityState.Unchanged;
+            }
+
             _context.Deployments.Add(deployment);
             await _context.SaveChangesAsync();
             return deployment;

@@ -25,7 +25,7 @@ namespace DeploymentHistoryBackend.Controllers
             _configuration = configuration;
         }
 
-        // GET: Deployments
+        // GET: api/Deployments/5
         [HttpGet("{limit?}")]
         public async Task<IActionResult> GetDeployments(int limit = 10)
         {
@@ -33,7 +33,7 @@ namespace DeploymentHistoryBackend.Controllers
             return new OkObjectResult(d);
         }
 
-        // GET: Deployments/app/5
+        // GET: api/Deployments/app/5
         [HttpGet("app/{appId}")]
         public async Task<IActionResult> GetByAppId(int appId)
         {
@@ -108,18 +108,15 @@ namespace DeploymentHistoryBackend.Controllers
             var commitTimestamp = TimeZoneInfo.ConvertTime(DateTime.Now, Program.AppTimeZone);
             if (deploymentEdit.Timestamp.HasValue)
             {
-                commitTimestamp = deploymentEdit.Timestamp.Value;
-            }
-            else if (deploymentEdit.Milliseconds.HasValue)
-            {
-                commitTimestamp = DateTime.UnixEpoch.AddMilliseconds(deploymentEdit.Milliseconds.Value);
+                commitTimestamp = TimeZoneInfo.ConvertTime(deploymentEdit.Timestamp.Value, Program.AppTimeZone);
             }
 
             var deployment = new Deployment()
             {
                 Application = app,
                 CommitId = deploymentEdit.CommitId,
-                Timestamp = commitTimestamp
+                Timestamp = commitTimestamp,
+                BranchName = deploymentEdit.BranchName
             };
 
             return deployment;
