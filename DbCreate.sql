@@ -11,8 +11,6 @@ CREATE TABLE Applications
     StoryRegEx nvarchar(50) NOT NULL,
     IsDisabled bit NOT NULL CONSTRAINT DF_Applications_IsDisabled DEFAULT 0,
 
-
-
     CONSTRAINT PK_Applications_Id PRIMARY KEY CLUSTERED ([Id])
 )
 GO
