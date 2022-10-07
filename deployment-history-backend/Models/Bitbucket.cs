@@ -5,9 +5,9 @@ namespace DeploymentHistoryBackend.Models
     public class BitbucketCommitResponse
     {
         [JsonProperty("values")]
-        public IEnumerable<BitbucketCommit>? BitbucketCommits { get; set; }
+        public IEnumerable<SourceControlCommit>? Commits { get; set; }
     }
-    public class BitbucketCommit
+    public class SourceControlCommit
     {
         public string? Id { get; set; }
         public string? Message { get; set; }

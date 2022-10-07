@@ -2,7 +2,7 @@
 {
     public class BitbucketConfig
     {
-        public string BitbucketHostUrl { get; set; }
-        public string BitbucketAccessToken { get; set; }
+        public string HostUrl { get; set; }
+        public string AccessToken { get; set; }
     }
 }

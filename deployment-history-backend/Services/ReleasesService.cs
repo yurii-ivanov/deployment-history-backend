@@ -1,9 +1,6 @@
 ﻿using System.Text.RegularExpressions;
-using DeploymentHistoryBackend.Controllers;
 using DeploymentHistoryBackend.Data;
 using DeploymentHistoryBackend.Models;
-using Microsoft.Extensions.Caching.Memory;
-using Newtonsoft.Json;
 
 namespace DeploymentHistoryBackend.Services
 {
@@ -13,22 +10,22 @@ namespace DeploymentHistoryBackend.Services
     }
     public class ReleasesService : IReleasesService
     {
-        private readonly IBitbucketRepository _bitbucketRepository;
+        private readonly ISourceControlRepository _sourceControlRepository;
 
-        public ReleasesService(IBitbucketRepository bitbucketRepository)
+        public ReleasesService(ISourceControlRepository sourceControlRepository)
         {
-            _bitbucketRepository = bitbucketRepository;
+            _sourceControlRepository = sourceControlRepository;
         }
 
         public async Task<IEnumerable<Release>> GetReleases(Application app)
         {
-            var bb = app.RepoUrl.Split('/');
-            var bbRepoName = bb[6];
-            var bbProjectName = bb[4];
-             var allCommits = (await _bitbucketRepository.GetCommits(bbRepoName, bbProjectName)).ToList();
+            var allCommits = (
+                await _sourceControlRepository.GetCommits(app.RepositoryName, app.OwnerName)
+                ).ToList();
 
             var releases = new List<Release>();
             var length = app.Deployments.Count() - 2;
+
             for (var i = 0; i <= length; i++)
             {
                 var commitTo = app.Deployments[i].CommitId;
@@ -40,7 +37,6 @@ namespace DeploymentHistoryBackend.Services
                     .GroupBy(s => s.ToUpperInvariant())
                     .Select(g => g.Key)
                     .OrderByDescending(s => s);
-                //stories = stories.Distinct();
 
                 releases.Add(new Release()
                 {
@@ -54,22 +50,21 @@ namespace DeploymentHistoryBackend.Services
         }
 
 
-        private IEnumerable<string> GetReleasedStories(List<BitbucketCommit> commits, string regEx)
+        private IEnumerable<string> GetReleasedStories(List<SourceControlCommit> commits, string regEx)
         {
             var storyRegEx = new Regex(regEx);
 
             var storyIds = new List<string>();
             foreach (var commit in commits)
             {
-                //storyIds.AddRange(storyRegEx.Matches(commit.Message).SelectMany(m => m.Value));
                 storyIds.AddRange(storyRegEx.Matches(commit.Message).Select(m => m.Value));
             }
 
             return storyIds;
         }
-        private IEnumerable<BitbucketCommit> GetCommitsBetween(List<BitbucketCommit> commits, string commitTo, string commitFrom)
+        private IEnumerable<SourceControlCommit> GetCommitsBetween(List<SourceControlCommit> commits, string commitTo, string commitFrom)
         {
-            var list = new List<BitbucketCommit>();
+            var list = new List<SourceControlCommit>();
 
             var found = false;
             foreach (var commit in commits)

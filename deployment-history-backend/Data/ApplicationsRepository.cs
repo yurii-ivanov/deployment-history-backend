@@ -84,7 +84,7 @@ namespace DeploymentHistoryBackend.Data
 
             if (string.IsNullOrWhiteSpace(application.StoryRegEx))
             {
-                application.StoryRegEx = "[a-zA-Z]{1,10}-[0-9]+"; // default matching AAA-1234
+                application.StoryRegEx = "[A-Z]{1,10}-[0-9]+"; // default matching AAA-1234
             }
 
             _context.Applications.Add(application);

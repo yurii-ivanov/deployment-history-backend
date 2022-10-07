@@ -6,11 +6,12 @@ namespace DeploymentHistoryBackend
 {
     public static class StartupExtensions
     {
+        private const string BITBUCKET_CONFIG_KEY = "BitbucketConfig";
         public static void RegisterServices(this IServiceCollection services)
         {
             services.AddTransient<HttpClient>();
             services.AddHttpClient();
-            services.AddTransient<IBitbucketRepository, BitbucketRepository>();
+            services.AddTransient<ISourceControlRepository, BitbucketRepository>();
             services.AddTransient<IReleasesService, ReleasesService>();
             services.AddTransient<ICachedReleasesService, CachedReleasesService>();
             services.AddTransient<IApplicationsRepository, ApplicationsRepository>();
@@ -19,9 +20,20 @@ namespace DeploymentHistoryBackend
             services.AddTransient<IDeploymentsService, DeploymentsService>();
         }
 
+        public static void AddHttpClients(this IServiceCollection services, IConfiguration configuration)
+        {
+            var bbConfig = configuration.GetSection(BITBUCKET_CONFIG_KEY);
+            services.AddHttpClient(Constants.BITBUCKET_CLIENT_NAME, client =>
+            {
+                client.BaseAddress = new Uri(bbConfig.GetValue<string>("HostUrl"));
+                client.DefaultRequestHeaders.Add("Authorization", $"Bearer {bbConfig.GetValue<string>("AccessToken")}");
+            });
+            //services.Configure<BitbucketConfig>(options => configuration.GetSection(BITBUCKET_CONFIG_KEY).Bind(options));
+        }
+
         public static void RegisterConfiguration(this IServiceCollection services, IConfiguration configuration)
         {
-            services.Configure<BitbucketConfig>(options => configuration.GetSection("BitbucketConfig").Bind(options));
+            services.Configure<BitbucketConfig>(options => configuration.GetSection(BITBUCKET_CONFIG_KEY).Bind(options));
         }
 
         private const string ProdOrigin = "prodOrigin";

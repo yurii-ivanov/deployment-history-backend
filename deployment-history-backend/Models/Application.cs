@@ -6,7 +6,8 @@ namespace DeploymentHistoryBackend.Models
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public string RepoUrl { get; set; }
+        public string RepositoryName { get; set; }
+        public string OwnerName { get; set; }
         public string StoryRegEx { get; set; }
 
         [JsonIgnore]
@@ -17,6 +18,6 @@ namespace DeploymentHistoryBackend.Models
         [JsonIgnore]
         public bool IsValid =>
             string.IsNullOrWhiteSpace(Name) == false &&
-            string.IsNullOrWhiteSpace(RepoUrl) == false;
+            string.IsNullOrWhiteSpace(RepositoryName) == false;
     }
 }

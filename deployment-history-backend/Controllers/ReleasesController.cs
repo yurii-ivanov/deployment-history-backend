@@ -13,12 +13,12 @@ namespace DeploymentHistoryBackend.Controllers
     {
         private readonly ICachedApplicationsRepository _applicationsRepository;
         private readonly IDeploymentsRepository _deploymentsRepository;
-        private readonly ICachedReleasesService _releasesService;
+        private readonly IReleasesService _releasesService;
 
         public ReleasesController(
             ICachedApplicationsRepository applicationsRepository,
             IDeploymentsRepository deploymentsRepository,
-            ICachedReleasesService releasesService)
+            IReleasesService releasesService)
         {
             _applicationsRepository = applicationsRepository;
             _deploymentsRepository = deploymentsRepository;
@@ -58,7 +58,8 @@ namespace DeploymentHistoryBackend.Controllers
                 return releases;
             }
 
-            releases = (await _releasesService.GetReleasesPaged(app, page, take)).ToList();
+            //releases = (await _releasesService.GetReleasesPaged(app, page, take)).ToList();
+            releases = (await _releasesService.GetReleases(app)).ToList();
 
             return releases;
         }

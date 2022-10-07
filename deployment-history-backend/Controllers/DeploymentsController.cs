@@ -39,7 +39,7 @@ namespace DeploymentHistoryBackend.Controllers
         {
             if (appId <= 0)
             {
-                return BadRequest("bruh");
+                return BadRequest($"{nameof(appId)} not valid");
             }
 
             var deployments = await _deploymentsService.GetByAppId(appId);
@@ -55,7 +55,7 @@ namespace DeploymentHistoryBackend.Controllers
 
             if (ModelState.IsValid == false)
             {
-                var result = new BadRequestObjectResult(new ErrorResponse() { Message = "bruh" });
+                var result = new BadRequestObjectResult(new ErrorResponse() { Message = "Data is missing check again."});
                 return result;
             }
 
@@ -74,7 +74,7 @@ namespace DeploymentHistoryBackend.Controllers
 
             if (ModelState.IsValid == false)
             {
-                var result = new BadRequestObjectResult(new ErrorResponse() { Message = "bruh" });
+                var result = new BadRequestObjectResult(new ErrorResponse() { Message = "Data is missing check again." });
                 return result;
             }
 

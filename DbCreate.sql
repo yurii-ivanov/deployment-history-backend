@@ -7,7 +7,8 @@ CREATE TABLE Applications
 (
     Id int IDENTITY(1,1) NOT NULL,
     Name nvarchar(100) NOT NULL CONSTRAINT UQ_Application_Name UNIQUE,
-    RepoUrl nvarchar(300) NOT NULL,
+    RepositoryName nvarchar(100) NOT NULL,
+	OwnerName nvarchar(100) NOT NULL,
     StoryRegEx nvarchar(50) NOT NULL,
     IsDisabled bit NOT NULL CONSTRAINT DF_Applications_IsDisabled DEFAULT 0,
 
@@ -29,4 +30,9 @@ CREATE TABLE Deployments
 GO
 ALTER TABLE Deployments
 ADD CONSTRAINT UQ_Deployments_CommitId_AppId_BranchName_Timestamp UNIQUE(CommitId, AppId, Timestamp, BranchName)
+GO
+
+GO
+ALTER TABLE Applications
+ADD CONSTRAINT UQ_Applications_Name_IsDisabled UNIQUE(Name, IsDisabled)
 GO

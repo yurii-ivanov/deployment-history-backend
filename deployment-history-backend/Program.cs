@@ -38,6 +38,7 @@ public class Program
         // Add services to the container.
         builder.Services.RegisterServices();
         builder.Services.RegisterConfiguration(builder.Configuration);
+        builder.Services.AddHttpClients(builder.Configuration);
 
         builder.Services.AddCustomCors();
         builder.Services.AddMemoryCache(o =>

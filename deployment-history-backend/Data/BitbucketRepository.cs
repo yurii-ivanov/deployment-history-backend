@@ -6,33 +6,30 @@ using Newtonsoft.Json;
 
 namespace DeploymentHistoryBackend.Data
 {
-    public interface IBitbucketRepository
+    public interface ISourceControlRepository
     {
-        Task<IEnumerable<BitbucketCommit>> GetCommits(string repoName, string projectName, string branchName = "master");
+        Task<IEnumerable<SourceControlCommit>> GetCommits(string repoName, string projectName, string branchName = "master");
     }
-    public class BitbucketRepository : IBitbucketRepository
+
+
+    public class BitbucketRepository : ISourceControlRepository
     {
-        private readonly BitbucketConfig _bitbucketConfig;
         private readonly HttpClient _httpClient;
+        private const string API_URL = "rest/api/1.0/projects";
         public BitbucketRepository(IHttpClientFactory httpClientFactory, IOptions<BitbucketConfig> options)
         {
-            _bitbucketConfig = options.Value;
-            _httpClient = httpClientFactory.CreateClient("Any");
+            _httpClient = httpClientFactory.CreateClient(Constants.BITBUCKET_CLIENT_NAME);
         }
 
-        public async Task<IEnumerable<BitbucketCommit>> GetCommits(string repoName, string projectName, string branchName = "master")
+        public async Task<IEnumerable<SourceControlCommit>> GetCommits(string repoName, string projectName, string branchName = "master")
         {
             if (string.IsNullOrWhiteSpace(repoName))
             {
                 throw new ArgumentException(nameof(repoName) + " is missing");
             }
-            var message = new HttpRequestMessage
-            {
-                RequestUri = new Uri($"{_bitbucketConfig.BitbucketHostUrl}/rest/api/1.0/projects/{projectName}/repos/{repoName}/commits/?until={branchName}&limit=50")
-            };
 
-            message.Headers.Add("Authorization", $"Bearer {_bitbucketConfig.BitbucketAccessToken}");
-            var response = await _httpClient.SendAsync(message);
+            var uri = $"/{API_URL}/{projectName}/repos/{repoName}/commits/?until={branchName}&limit=50";
+            var response = await _httpClient.GetAsync(uri);
 
             if (response.StatusCode != HttpStatusCode.OK)
             {
@@ -43,7 +40,7 @@ namespace DeploymentHistoryBackend.Data
             var data = await response.Content.ReadAsStringAsync();
 
             var commitsResponse = JsonConvert.DeserializeObject<BitbucketCommitResponse>(data);
-            return commitsResponse.BitbucketCommits;
+            return commitsResponse.Commits;
         }
     }
 }
